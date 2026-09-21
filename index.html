@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pang Letter</title>
-    <!-- === SECTION 1: Fonts & Core Setup === -->
+   
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* === SECTION 2: Body & Layout === */
+   
         body {
             font-family: 'Kanit', sans-serif;
             background-color: #fff0f3;
@@ -90,7 +90,7 @@
             pointer-events: none;
         }
         
-        /* === SECTION 4: The Letter Inside === */
+    
         .letter {
             position: absolute;
             top: 15px; left: 15px; right: 15px;
@@ -113,7 +113,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.06); 
         }
         
-        /* === SECTION 5: Animation States === */
+
         .envelope-wrapper.open .envelope-top {
             transform: rotateX(180deg);
             z-index: 1; 
@@ -127,14 +127,14 @@
             z-index: 10;
         }
 
-        /* 📍 นำอนิเมชั่นกระดาษหล่นคลุมซองกลับมาให้เหมือนในวิดีโอ 📍 */
+       
         .envelope-wrapper.cover .letter {
             top: -20px;
             left: -20px;
             right: -20px;
             height: 240px;
             z-index: 10;
-            transform: translateY(0px) rotate(0deg); /* ให้สไลด์ลงมาตรงๆ ไม่ค้างอยู่ข้างบน */
+            transform: translateY(0px) rotate(0deg); 
             box-shadow: 0 8px 24px rgba(255, 143, 163, 0.25);
         }
 
@@ -147,7 +147,6 @@
             z-index: 10;
         }
 
-        /* === SECTION 6: Text Elements inside the Letter === */
         .letter-to {
             position: absolute;
             top: 18px;
@@ -199,7 +198,7 @@
             50% { opacity: 1; }
         }
 
-        /* === SECTION 7: Yes / No Buttons === */
+    
         .buttons {
             position: absolute;
             bottom: 55px; 
@@ -239,7 +238,6 @@
             transition: transform 0.2s ease-out; 
         }
         
-        /* === SECTION 8: Decorations (Bow & Hearts) === */
         .letter-decor {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -325,7 +323,6 @@
             45%      { transform: scale(1.06); }
         }
 
-        /* === SECTION 9: Music Button === */
         #music-btn {
             display: none;
             align-items: center;
@@ -352,7 +349,6 @@
     <audio id="bgm" src="MyBeatingHeart.MP3" loop preload="auto"></audio>
     <button id="music-btn" onclick="toggleMusic()" aria-label="Play/Pause Music">♪</button>
 
-    <!-- Defines SVG Gradients & Filters -->
     <svg width="0" height="0" style="position:absolute" aria-hidden="true">
         <defs>
             <radialGradient id="heartGrad" cx="35%" cy="28%" r="85%">
@@ -364,7 +360,6 @@
         </defs>
     </svg>
 
-    <!-- Main Wrapper -->
     <div id="viewer-mode">
         <h3 id="tap-text">Please click to open</h3>
         
@@ -390,7 +385,6 @@
         </div>
     </div>
 
-    <!-- === SECTION 10: JavaScript Application Logic === -->
     <script>
         const storyMessages = [
             "ผมดูซีรีส์มาเยอะนะ\nแต่กลับไม่เชื่อเรื่องรักแรกพบเลย\n<span class='hint-text'>( Please click )</span>",
@@ -417,11 +411,9 @@
         let isAnimating = false;
         let stage = 0;
 
-        // --- Google App Script Tracking Configuration ---
-        const LOG_URL = 'https://script.google.com/macros/s/AKfycbxepNUoAwY3OxAHSI5DCgo_B3ikWIA0_wuVU1nVGEZDVq8f2l_r6l9kvjr-yoL72tN5/exec';
+        const LOG_URL = 'https://script.google.com/macros/s/AKfycbxLAhy_HgW7R9ftGn_b5ZfrfHc5vq-sL4Gp4ZYFJHAyBnepdVrMfu8BzxTWeAg4n96Z/exec';
         const sessionId = 's' + Math.random().toString(36).slice(2) + Date.now().toString(36);
 
-        // 📍 แก้ชื่อตัวแปรจาก event เป็น actionName ป้องกันบั๊กในมือถือ 📍
         function track(actionName, extra) {
             try {
                 if (!LOG_URL) return;
@@ -431,7 +423,6 @@
             } catch (e) {}
         }
 
-        // --- Generate Hearts and Bows (SVG) ---
         function makeHeart(cls, simple) {
             const shine = simple
                 ? '<ellipse cx="60" cy="42" rx="24" ry="12" fill="#ffffff" opacity="0.45" transform="rotate(-35 60 42)"/>'
@@ -471,7 +462,6 @@
         }
         document.getElementById('letter-decor').innerHTML = makeBow('corner tl') + makeBow('corner tr');
 
-        // --- Music Controls ---
         function startMusic() {
             const bgm = document.getElementById('bgm');
             bgm.volume = 0.5;
@@ -493,11 +483,9 @@
             }
         }
 
-        // --- Flow Controllers ---
         function openLetterFlow(event) {
             const wrapper = document.getElementById('envelope-wrapper');
 
-            // Stage 0: Initial Envelope Click
             if (stage === 0) {
                 startMusic();
                 track('open');
@@ -513,12 +501,11 @@
                 }, 1450);
                 setTimeout(() => {
                     document.getElementById('cover-hint').style.opacity = 1;
-                    stage = 1; // Wait for the second click!
+                    stage = 1; 
                 }, 2200);
                 return;
             }
 
-            // Stage 1: "To: Pang" Cover Click
             if (stage === 1) {
                 stage = -1;
                 document.getElementById('letter-to').style.opacity = 0;
@@ -537,7 +524,6 @@
                 return;
             }
 
-            // Stage 2: Reading the letter pages
             if (stage === 2) {
                 nextMessage(event);
             }
@@ -560,7 +546,6 @@
                 
                 track('page', { page: currentStep + 1, total: storyMessages.length });
 
-                // Final Page Logic
                 if (currentStep === storyMessages.length - 1) {
                     letterText.style.cursor = 'default';
                     letterText.style.transform = 'translateY(-40px)';
@@ -579,7 +564,6 @@
             }, 500);
         }
 
-        // --- Interactive Button Behaviours ---
         function dodge(event) {
             event.stopPropagation(); 
             if(event.type === 'touchstart') { event.preventDefault(); }
