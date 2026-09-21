@@ -113,7 +113,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.06); 
         }
         
-        /* === SECTION 5: Animation States (Bug Fixed Here!) === */
+        /* === SECTION 5: Animation States === */
         .envelope-wrapper.open .envelope-top {
             transform: rotateX(180deg);
             z-index: 1; 
@@ -127,14 +127,14 @@
             z-index: 10;
         }
 
-        /* Fixed CSS Bug: Added transform to keep it floating instead of falling inside */
+        /* 📍 นำอนิเมชั่นกระดาษหล่นคลุมซองกลับมาให้เหมือนในวิดีโอ 📍 */
         .envelope-wrapper.cover .letter {
-            top: 15px;
-            left: 15px;
-            right: 15px;
+            top: -20px;
+            left: -20px;
+            right: -20px;
             height: 240px;
             z-index: 10;
-            transform: translateY(-130px); /* This keeps the letter visible above the envelope */
+            transform: translateY(0px) rotate(0deg); /* ให้สไลด์ลงมาตรงๆ ไม่ค้างอยู่ข้างบน */
             box-shadow: 0 8px 24px rgba(255, 143, 163, 0.25);
         }
 
@@ -421,7 +421,7 @@
         const LOG_URL = 'https://script.google.com/macros/s/AKfycbxepNUoAwY3OxAHSI5DCgo_B3ikWIA0_wuVU1nVGEZDVq8f2l_r6l9kvjr-yoL72tN5/exec';
         const sessionId = 's' + Math.random().toString(36).slice(2) + Date.now().toString(36);
 
-        // Fixed Bug: Changed parameter from 'event' to 'actionName' to prevent JS reference conflicts
+        // 📍 แก้ชื่อตัวแปรจาก event เป็น actionName ป้องกันบั๊กในมือถือ 📍
         function track(actionName, extra) {
             try {
                 if (!LOG_URL) return;
