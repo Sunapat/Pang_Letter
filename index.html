@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pang Letter</title>
-   
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-   
         body {
             font-family: 'Kanit', sans-serif;
             background-color: #fff0f3;
@@ -44,7 +43,7 @@
             50% { transform: translateY(-10px); }
         }
 
-        /* === SECTION 3: Envelope Design === */
+        /* === Envelope Design === */
         .envelope-wrapper {
             position: relative;
             width: 320px;
@@ -89,8 +88,7 @@
             transition: transform 0.6s ease-in-out;
             pointer-events: none;
         }
-        
-    
+
         .letter {
             position: absolute;
             top: 15px; left: 15px; right: 15px;
@@ -112,7 +110,6 @@
             justify-content: center; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.06); 
         }
-        
 
         .envelope-wrapper.open .envelope-top {
             transform: rotateX(180deg);
@@ -127,7 +124,6 @@
             z-index: 10;
         }
 
-       
         .envelope-wrapper.cover .letter {
             top: -20px;
             left: -20px;
@@ -197,8 +193,7 @@
             0%, 100% { opacity: 0.4; }
             50% { opacity: 1; }
         }
-
-    
+        
         .buttons {
             position: absolute;
             bottom: 55px; 
@@ -411,16 +406,30 @@
         let isAnimating = false;
         let stage = 0;
 
-        const LOG_URL = 'https://script.google.com/macros/s/AKfycbw5a6nbbcT9GvRZrcIMPDEGc0vLcdXsd62zgx5bYRWpZaIgpPbtGJ_QG-zAPD4Czthp/exec';
-        const sessionId = 's' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+        const LOG_URL = 'https://script.google.com/macros/s/AKfycbyM3bSe8M5mTZ6LWIJjv723thaYLVbariKV_Jy4VSaDHehShm8T4had2VO1p2aYLYbZ/exec';
+        
+        const generateSessionId = () => {
+            if (window.crypto && window.crypto.getRandomValues) {
+                return 's' + Array.from(window.crypto.getRandomValues(new Uint32Array(2))).map(n => n.toString(36)).join('') + Date.now().toString(36);
+            }
+            return 's' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+        };
+        const sessionId = generateSessionId();
 
-        function track(actionName, extra) {
+        function track(actionName, extra = {}) {
             try {
                 if (!LOG_URL) return;
-                const payload = JSON.stringify(Object.assign({ sid: sessionId, event: actionName }, extra || {}));
-                if (navigator.sendBeacon && navigator.sendBeacon(LOG_URL, payload)) return;
-                fetch(LOG_URL, { method: 'POST', mode: 'no-cors', body: payload, keepalive: true });
-            } catch (e) {}
+                const payload = JSON.stringify({ sid: sessionId, event: actionName, ...extra });
+                
+                if (navigator.sendBeacon) {
+                    const success = navigator.sendBeacon(LOG_URL, payload);
+                    if (success) return;
+                }
+                
+                fetch(LOG_URL, { method: 'POST', mode: 'no-cors', body: payload, keepalive: true }).catch(() => {});
+            } catch (e) {
+                console.error("Tracking Error:", e);
+            }
         }
 
         function makeHeart(cls, simple) {
@@ -605,6 +614,30 @@
                 }, i * 300);
             }
         }
+
+    
+        setInterval(() => {
+            if (document.visibilityState === 'visible' && stage > 0) {
+                track('heartbeat');
+            }
+        }, 15000);
+
+        document.addEventListener('visibilitychange', () => {
+            if (stage <= 0) return;
+            const pageInfo = (currentStep + 1) + '/' + storyMessages.length;
+            if (document.visibilityState === 'hidden') {
+                track('status_change', { statusText: 'Away / Switched App (at ' + pageInfo + ')' });
+            } else {
+                track('status_change', { statusText: 'Reading (Online)' });
+            }
+        });
+
+  
+        window.addEventListener('pagehide', () => {
+            if (stage <= 0) return;
+            const pageInfo = (currentStep + 1) + '/' + storyMessages.length;
+            track('status_change', { statusText: 'Left / Closed page (at ' + pageInfo + ')' });
+        });
     </script>
 </body>
 </html>
